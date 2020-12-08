@@ -1,0 +1,13 @@
+ARG BASE_IMAGE_PREFIX=""
+FROM ${BASE_IMAGE_PREFIX}node as builder
+
+ADD / /source
+ENV CI=true
+WORKDIR /source
+RUN npm ci && npm run build
+
+FROM docker.pkg.github.com/n/p/p
+ENV APPLICATION_NAME=je
+COPY --from=builder /source/build /app
+
+ADD deior.yaml /orator.yaml
